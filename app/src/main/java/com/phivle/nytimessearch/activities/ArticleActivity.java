@@ -1,7 +1,6 @@
 package com.phivle.nytimessearch.activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
@@ -10,11 +9,7 @@ import android.webkit.WebViewClient;
 import com.phivle.nytimessearch.R;
 import com.phivle.nytimessearch.models.Article;
 
-import java.io.Serializable;
-
-/**
- * Created by Vsin on 9/18/17.
- */
+import org.parceler.Parcels;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -29,7 +24,7 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        article = (Article) getIntent().getSerializableExtra("article");
+        article = Parcels.unwrap(getIntent().getParcelableExtra("article"));
 
         webView = (WebView) findViewById(R.id.wvArticle);
 

@@ -3,20 +3,36 @@ package com.phivle.nytimessearch.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
-/**
- * Created by Vsin on 9/17/17.
- */
+public class Article implements Parcelable {
 
-public class Article implements Serializable {
-
-    private static final String NYTIMES_URL = "https://www.nytimes.com";
+    private static final String NYTIMES_URL = "https://www.nytimes.com/";
     private String mWebUrl;
     private String mHeadline;
     private String mThumbnail;
+
+    private Article(Parcel in) {
+        mWebUrl = in.readString();
+        mHeadline = in.readString();
+        mThumbnail = in.readString();
+    }
+
+    public static final Creator<Article> CREATOR = new Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel in) {
+            return new Article(in);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 
     public String getWebUrl() {
         return mWebUrl;
@@ -38,7 +54,7 @@ public class Article implements Serializable {
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
 
             if (multimedia.length() > 0) {
-                JSONObject multimediaJson = multimedia.getJSONObject(0);
+                JSONObject multimediaJson = multimedia.getJSONObject(new Random().nextInt(multimedia.length()));
                 this.mThumbnail = String.format("%s%s", NYTIMES_URL, multimediaJson.getString("url"));
             } else {
                 this.mThumbnail = "";
@@ -59,5 +75,17 @@ public class Article implements Serializable {
         }
 
         return results;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mWebUrl);
+        parcel.writeString(mHeadline);
+        parcel.writeString(mThumbnail);
     }
 }

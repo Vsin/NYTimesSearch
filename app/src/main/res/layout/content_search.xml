@@ -14,9 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/rvResults"
-        android:layout_alignLeft="@+id/rvResults"
         android:layout_alignStart="@+id/rvResults"
-        android:layout_toLeftOf="@+id/btnSearch"
         android:layout_toStartOf="@+id/btnSearch"
         android:ems="10"
         android:hint="@string/hint"
@@ -28,16 +26,16 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/rvResults"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/rvResults"
         android:onClick="onArticleSearch"
         android:text="@string/search" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvResults"
-        android:layout_width="353dp"
-        android:layout_height="408dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/btnSearch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
         android:numColumns="4" />
 </RelativeLayout>

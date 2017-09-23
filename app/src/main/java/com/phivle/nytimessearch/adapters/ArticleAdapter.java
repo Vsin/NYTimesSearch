@@ -6,35 +6,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.phivle.nytimessearch.R;
 import com.phivle.nytimessearch.activities.ArticleActivity;
 import com.phivle.nytimessearch.models.Article;
-import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
+import org.parceler.Parcels;
+
 import java.util.List;
-
-/**
- * Created by Vsin on 9/17/17.
- */
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
 
-    private List<Article> mArticles;
-    private Context mContext;
-
-    private Context getContext() {
-        return mContext;
-    }
-
+    final private List<Article> mArticles;
+    final private Context mContext;
 
     public ArticleAdapter(Context context, List<Article> articles) {
         mContext = context;
         mArticles = articles;
+    }
+
+    private Context getContext() {
+        return mContext;
     }
 
     @Override
@@ -48,22 +43,22 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ArticleAdapter.ViewHolder viewHolder, int position) {
         Article article = mArticles.get(position);
         String articleThumbnail = article.getThumbnail();
         String articleTitle = article.getHeadline();
 
-        TextView tvTitle = holder.tvTitle;
+        TextView tvTitle = viewHolder.tvTitle;
         tvTitle.setText(articleTitle);
 
-        ImageView thumbnail = holder.thumbnail;
+        Glide.with(getContext()).load(articleThumbnail).placeholder(R.drawable.ic_broken_image_black_24dp).into(viewHolder.ivThumbnail);
 
-        thumbnail.setImageResource(0);
+    }
 
-        if (!articleThumbnail.equals("")) {
-            Picasso.with(mContext).load(articleThumbnail).into(thumbnail);
-        }
-
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.clear(holder.itemView);
     }
 
     @Override
@@ -72,30 +67,30 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView thumbnail;
-        TextView tvTitle;
-        Context context;
+        final ImageView ivThumbnail;
+        final TextView tvTitle;
 
         ViewHolder(View itemView) {
             super(itemView);
 
-            thumbnail = (ImageView) itemView.findViewById(R.id.ivImage);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            context = mContext;
+            ivThumbnail = itemView.findViewById(R.id.ivImage);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
 
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            Intent viewArticleIntent = new Intent(context, ArticleActivity.class);
+            Intent viewArticleIntent = new Intent(mContext, ArticleActivity.class);
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Article article = mArticles.get(position);
-                viewArticleIntent.putExtra("article", article);
+                viewArticleIntent.putExtra("article", Parcels.wrap(article));
 
-                context.startActivity(viewArticleIntent);
+                getContext().startActivity(viewArticleIntent);
             }
         }
+
     }
+
 }
