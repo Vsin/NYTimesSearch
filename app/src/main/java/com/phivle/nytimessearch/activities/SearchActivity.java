@@ -13,6 +13,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -49,9 +50,10 @@ public class SearchActivity extends AppCompatActivity {
     private SharedPreferences mFilters;
     private EndlessRecyclerViewScrollListener mScrollListener;
 
+    ConnectivityManager mConnectivityManager;
+
     private List<Article> articles;
     private ArticleAdapter adapter;
-    private ConnectivityManager mConnectivityManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,9 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new ArticleAdapter(this, articles);
         mRvResults.setAdapter(adapter);
         mRvResults.setLayoutManager(staggeredGridLayoutManager);
-        mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        mConnectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
 
         mScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
 
@@ -92,13 +96,11 @@ public class SearchActivity extends AppCompatActivity {
                 RequestParams params = prepareParams(String.valueOf(page));
 
                 client = new AsyncHttpClient();
-
                 NetworkInfo activeNetwork = mConnectivityManager.getActiveNetworkInfo();
-                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
                 if (isConnected) {
 
-                    // notify user you are online
 
                     client.get(URL, params, new JsonHttpResponseHandler() {
                         @Override
@@ -122,13 +124,9 @@ public class SearchActivity extends AppCompatActivity {
                                 adapter.notifyItemRangeInserted(curSize, articleResults.size());
                             } catch (JSONException e) {
                                 e.printStackTrace();
-
                             }
                         }
                     });
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "No network connectivity", Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -156,7 +154,7 @@ public class SearchActivity extends AppCompatActivity {
         return params;
     }
 
-    private void setupViews() {
+    public void setupViews() {
         mEtQuery = (EditText) findViewById(R.id.etQuery);
         mRvResults = (RecyclerView) findViewById(R.id.rvResults);
     }
@@ -178,10 +176,17 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showFilterDialog() {
+    public void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
         FilterFragment filterFragment = FilterFragment.newInstance();
         filterFragment.show(fm, "filter");
+    }
+
+    public void onArticleSearch(View view) {
+
+        RequestParams params = prepareParams(DEFAULT_PAGE);
+
+        search(params);
     }
 
     private void search(RequestParams params) {
@@ -189,8 +194,8 @@ public class SearchActivity extends AppCompatActivity {
         client = new AsyncHttpClient();
 
         NetworkInfo activeNetwork = mConnectivityManager.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
             client.get(URL, params, new JsonHttpResponseHandler() {
                 @Override
@@ -217,8 +222,6 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
             });
-        } else {
-            Toast.makeText(this, "No network connectivity", Toast.LENGTH_LONG).show();
         }
     }
 

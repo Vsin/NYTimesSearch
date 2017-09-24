@@ -1,2 +1,9 @@
 <resources>
+    <dimen name="card_relative_layout_padding">16dp</dimen>
+    <dimen name="article_corner_radius">4dp</dimen>
+    <dimen name="headline_text_size">16sp</dimen>
+    <dimen name="recycler_view_margin">15dp</dimen>
+    <dimen name="news_desk_text_size">24sp</dimen>
+    <dimen name="spinner_text_size">24sp</dimen>
+    <dimen name="fragment_header_size">24sp</dimen>
 </resources>
